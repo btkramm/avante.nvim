@@ -93,9 +93,9 @@ M._stream = function(opts, Provider)
         break
       end
     end
-    if #history_messages > 0 and history_messages[1].role == "assistant" then table.remove(history_messages, 1) end
     -- prepend the history messages to the messages table
     vim.iter(history_messages):each(function(msg) table.insert(messages, 1, msg) end)
+    if #messages > 0 and messages[1].role == "assistant" then table.remove(messages, 1) end
   end
 
   ---@type AvantePromptOptions
@@ -194,7 +194,7 @@ M._stream = function(opts, Provider)
       active_job = nil
       completed = true
       cleanup()
-      opts.on_complete(nil)
+      opts.on_complete(err)
     end,
     callback = function(result)
       active_job = nil
@@ -347,6 +347,8 @@ end
 
 ---@param opts StreamOptions
 M.stream = function(opts)
+  if opts.on_chunk ~= nil then opts.on_chunk = vim.schedule_wrap(opts.on_chunk) end
+  if opts.on_complete ~= nil then opts.on_complete = vim.schedule_wrap(opts.on_complete) end
   local Provider = opts.provider or P[Config.provider]
   if Config.dual_boost.enabled then
     M._dual_boost_stream(opts, Provider, P[Config.dual_boost.first_provider], P[Config.dual_boost.second_provider])
