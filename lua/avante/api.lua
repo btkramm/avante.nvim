@@ -135,7 +135,8 @@ M.ask = function(opts)
       close_on_submit = true,
       win_opts = {
         border = Config.options.windows.ask.border,
-        title = { { "ask", "FloatTitle" } },
+        title = { { " Ask ", "FloatTitle" } },
+        title_pos = "left",
       },
       start_insert = Config.options.windows.ask.start_insert,
     })
